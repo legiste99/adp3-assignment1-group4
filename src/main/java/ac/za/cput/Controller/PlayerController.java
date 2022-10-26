@@ -1,3 +1,10 @@
+/**
+ * Player Controller
+ * PlayerController.java
+ * Thina Mbiza 217217095
+ * 19 October 2022
+ */
+
 package ac.za.cput.Controller;
 
 import ac.za.cput.Service.PlayerService;

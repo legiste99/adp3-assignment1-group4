@@ -1,3 +1,10 @@
+/**
+ * Player Service
+ * PlayerService.java
+ * Author: Thina Mbiza 217217095
+ * Date: 10 April 2022
+ * */
+
 package ac.za.cput.Service;
 
 import ac.za.cput.entity.Player;

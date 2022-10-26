@@ -1,5 +1,11 @@
-package ac.za.cput.Controller;
+/**
+ * Venue Controller
+ * VenueController.java
+ * Author: Thina Mbiza 217217095
+ * Date: 18 October 2022
+ */
 
+package ac.za.cput.Controller;
 
 import ac.za.cput.Service.VenueService;
 import ac.za.cput.entity.Venue;
