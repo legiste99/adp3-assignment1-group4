@@ -7,101 +7,73 @@
 
 package ac.za.cput.entity;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Getter
+@Setter
+@Table(name = "venue")
 public class Venue {
-
-    private String venueId;
-    private String fixtureId;
-    private String teamId;
-    private String stadiumName;
+    @Id
+    @Column(name = "venue_id", nullable = false)
+    private String id;
+    private String venueName;
     private int capacity;
-    private String weather;
 
-    public Venue(VenueBuilder venueBuilder){
-        this.venueId = venueBuilder.venueId;
-        this.fixtureId = venueBuilder.fixtureId;
-        this.teamId = venueBuilder.teamId;
-        this.stadiumName = venueBuilder.stadiumName;
-        this.capacity = venueBuilder.capacity;
-        this.weather = venueBuilder.weather;
+
+    //Should be a OneToOne Relationship, A team can only have one Venue and a Venue can belong to only one Team.
+    @JsonIgnore
+    @ManyToMany(mappedBy = "teamHomeVenue")
+    private Set<Team> team = new HashSet<>();
+
+    public Venue(Builder builder) {
+        this.id = builder.id;
+        this.venueName = builder.venueName;
+        this.capacity = builder.capacity;
     }
 
-    public String getVenueId() {
-        return venueId;
+    public Venue() {
     }
 
-    public String getFixtureId() {
-        return fixtureId;
-    }
 
-    public String getStadiumName() {
-        return stadiumName;
-    }
+    public static class Builder {
 
-    public String getTeamId() {
-        return teamId;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public String getWeather() {
-        return weather;
-    }
-
-    @Override
-    public String toString() {
-        return "Venue{" +
-                "venueId='" + venueId + '\'' +
-                ", fixtureId='" + fixtureId + '\'' +
-                ", teamId='" + teamId + '\'' +
-                ", stadiumName='" + stadiumName + '\'' +
-                ", capacity=" + capacity +
-                ", weather='" + weather + '\'' +
-                '}';
-    }
-
-    public static class VenueBuilder{
-
-        private String venueId;
-        private String fixtureId;
-        private String teamId;
-        private String stadiumName;
+        private String id;
+        private String venueName;
         private int capacity;
-        private String weather;
 
-        public VenueBuilder setVenueId(String venueId) {
-            this.venueId = venueId;
+        public Builder setId(String id) {
+            this.id = id;
             return this;
         }
 
-        public VenueBuilder setFixtureId(String fixtureId) {
-            this.fixtureId = fixtureId;
+        public Builder setVenueName(String venueName) {
+            this.venueName = venueName;
             return this;
         }
 
-        public VenueBuilder setTeamId(String teamId) {
-            this.teamId = teamId;
-            return this;
-        }
-
-        public VenueBuilder setStadiumName(String stadiumName) {
-            this.stadiumName = stadiumName;
-            return this;
-        }
-
-        public VenueBuilder setCapacity(int capacity) {
+        public Builder setCapacity(int capacity) {
             this.capacity = capacity;
             return this;
         }
 
-        public VenueBuilder setWeather(String weather) {
-            this.weather = weather;
+        public Builder copy(Venue venue) {
+            this.id = venue.id;
+            this.venueName = venueName;
+            this.capacity = venue.capacity;
             return this;
         }
 
-        public Venue build(){
+        public Venue build() {
             return new Venue(this);
         }
+
     }
 }

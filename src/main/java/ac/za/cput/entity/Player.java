@@ -1,155 +1,140 @@
 /**
  * Player Entity
- * player.java
+ * Player.java
  * Thina Mbiza 217217095
  * 31 March 2022
  */
 package ac.za.cput.entity;
 
-public class Player {
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    private String playerId;
-    private String teamId;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Getter
+@Setter
+@ToString
+@Table(name = "player")
+public class Player {
+    @Id
+    @Column(name = "player_id", nullable = false)
+    private String id;
     private String firstName;
     private String middleName;
     private String lastName;
-    private int age;
-    private int position;
-    private String team;
-    private int goals;
-    private int assists;
+    private int age; // todo: Player - can change this to date of birth and get age from that.
+    private String position;
+    private int positionNumber;
 
-    public Player(Player.PlayerBuilder playerBuilder) {
-        this.playerId = playerBuilder.playerId;
-        this.teamId = playerBuilder.teamId;
-        this.firstName = playerBuilder.firstName;
-        this.middleName = playerBuilder.middleName;
-        this.lastName = playerBuilder.lastName;
-        this.age = playerBuilder.age;
-        this.position = playerBuilder.position;
-        this.team = playerBuilder.team;
-        this.goals = playerBuilder.goals;
-        this.assists = playerBuilder.assists;
+    // TODO: These attributes should be in their own Class PLayerGlobalStats
+    private int totalGoalsScored;
+    private int totalAssistsMade;
+
+    //OneToMany - Player only belongs to one team
+    @JsonIgnore
+    @ManyToMany(mappedBy = "teamPlayers")
+    private Set<Team> team = new HashSet<>();
+
+    //This should be a OneToMany Relationship
+    @ManyToMany(mappedBy = "fixturePlayerStats")
+    private Set<Fixture> playerFixtures = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "player_player_stats",
+            joinColumns = @JoinColumn(name = "player_id"),
+            inverseJoinColumns = @JoinColumn(name = "player_stats_id")
+    )
+    private Set<PlayerStats> playerPlayerStats = new HashSet<>();
+
+    public Player(Builder builder) {
+        this.id = builder.id;
+        this.firstName = builder.firstName;
+        this.middleName = builder.middleName;
+        this.lastName = builder.lastName;
+        this.age = builder.age;
+        this.position = builder.position;
+        this.positionNumber = builder.positionNumber;
+        this.totalGoalsScored = builder.totalGoalsScored;
+        this.totalAssistsMade = builder.totalAssistsMade;
     }
 
+    public Player() {
 
-
-    public String getPlayerId() {
-        return playerId;
     }
 
-    public String getTeamId() {
-        return teamId;
-    }
+    public static class Builder{
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public String getTeam() {
-        return team;
-    }
-
-    public int getGoals() {
-        return goals;
-    }
-
-    public int getAssists() {
-        return assists;
-    }
-
-    @Override
-    public String toString() {
-        return "Player{" +
-                "playerId='" + playerId + '\'' +
-                ", teamId='" + teamId + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", age=" + age +
-                ", position=" + position +
-                ", team='" + team + '\'' +
-                ", goals=" + goals +
-                ", assists=" + assists +
-                '}';
-    }
-
-    public static class PlayerBuilder{
-
-        private String playerId;
-        private String teamId;
+        private String id;
         private String firstName;
         private String middleName;
         private String lastName;
         private int age;
-        private int position;
-        private String team;
-        private int goals;
-        private int assists;
+        private String position;
+        private int positionNumber;
+        private int totalGoalsScored;
+        private int totalAssistsMade;
 
-        public Player.PlayerBuilder setPlayerId(String playerId) {
-            this.playerId = playerId;
+        public Builder setId(String id) {
+            this.id = id;
             return this;
         }
 
-        public Player.PlayerBuilder setTeamId(String teamId) {
-            this.teamId = teamId;
-            return this;
-        }
-
-        public Player.PlayerBuilder setFirstName(String firstName) {
+        public Builder setFirstName(String firstName) {
             this.firstName = firstName;
             return this;
         }
 
-        public Player.PlayerBuilder setMiddleName(String middleName) {
+        public Builder setMiddleName(String middleName) {
             this.middleName = middleName;
             return this;
         }
 
-        public Player.PlayerBuilder setLastName(String lastName) {
+        public Builder setLastName(String lastName) {
             this.lastName = lastName;
             return this;
         }
 
-       public Player.PlayerBuilder setAge(int age) {
+        public Builder setAge(int age) {
             this.age = age;
             return this;
         }
 
-        public Player.PlayerBuilder setPosition(int position) {
+        public Builder setPosition(String position) {
             this.position = position;
             return this;
         }
 
-        public Player.PlayerBuilder setTeam(String team) {
-            this.team = team;
+        public Builder setPositionNumber(int positionNumber) {
+            this.positionNumber = positionNumber;
             return this;
         }
 
-        public Player.PlayerBuilder setGoals(int goals) {
-            this.goals = goals;
+        public Builder setTotalGoalsScored(int totalGoalsScored) {
+            this.totalGoalsScored = totalGoalsScored;
             return this;
         }
 
-        public Player.PlayerBuilder setAssists(int assists) {
-            this.assists = assists;
+        public Builder setTotalAssistsMade(int totalAssistsMade) {
+            this.totalAssistsMade = totalAssistsMade;
+            return this;
+        }
+
+        public Builder copy(Player player){
+            this.id = player.id;
+            this.firstName = player.firstName;
+            this.middleName = player.middleName;
+            this.lastName = player.lastName;
+            this.age = player.age;
+            this.position = player.position;
+            this.positionNumber = player.positionNumber;
+            this.totalGoalsScored = player.totalGoalsScored;
+            this.totalAssistsMade = player.totalAssistsMade;
             return this;
         }
 
@@ -158,7 +143,4 @@ public class Player {
         }
 
     }
-
 }
-
-
